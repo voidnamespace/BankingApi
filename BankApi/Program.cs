@@ -18,6 +18,10 @@ builder.Services.AddScoped<TokenService>();
 builder.Services.AddScoped<BankCardService>();
 builder.Services.AddScoped<TransactionService>();
 
+builder.Services.AddSingleton(new RedisService("localhost:6379"));
+
+
+
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(c =>
@@ -113,6 +117,7 @@ if (app.Environment.IsDevelopment())
 
 app.UseMiddleware<ExceptionMiddleware>();
 app.UseAuthentication();
+app.UseMiddleware<SessionMiddleware>();
 app.UseAuthorization();
 
 app.MapControllers();

@@ -8,12 +8,14 @@ public class AuthService
     private readonly ClientService _clientService;
     private readonly PasswordService _passwordService;
     private readonly TokenService _tokenService;
+    private readonly RedisService _redis;
 
-    public AuthService(ClientService clientService, PasswordService passwordService, TokenService tokenService)
+    public AuthService(ClientService clientService, PasswordService passwordService, TokenService tokenService, RedisService redis)
     {
         _clientService = clientService;
         _passwordService = passwordService;
         _tokenService = tokenService;
+        _redis = redis;
     }
     public async Task<string> LoginAsync(string email, string password)
     {
@@ -25,6 +27,10 @@ public class AuthService
             throw new UnauthorizedAccessException("Invalid pass");
 
         var token = _tokenService.GenerateToken(client);
+
+        await _redis.SetStringAsync($"session:{client.Id}", client.Id.ToString(), TimeSpan.FromMinutes(15));
+
+
         return token;
     }
 }
