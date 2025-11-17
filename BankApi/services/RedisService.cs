@@ -1,17 +1,15 @@
 ﻿namespace BankApi.Services;
 using StackExchange.Redis;
 
-
-
 public class RedisService
 {
-    private readonly ConnectionMultiplexer _redis;
+    private readonly IConnectionMultiplexer _redis;
     private readonly IDatabase _db;
 
-    public RedisService(string connectionString)
+    public RedisService(IConnectionMultiplexer redis)
     {
-        _redis = ConnectionMultiplexer.Connect(connectionString);
-        _db = _redis.GetDatabase();
+        _redis = redis;                
+        _db = _redis.GetDatabase();     
     }
 
     public async Task SetStringAsync(string key, string value, TimeSpan? expiry = null)
