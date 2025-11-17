@@ -4,6 +4,7 @@ using BankApi.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
+using StackExchange.Redis;
 using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -17,8 +18,13 @@ builder.Services.AddScoped<PasswordService>();
 builder.Services.AddScoped<TokenService>();
 builder.Services.AddScoped<BankCardService>();
 builder.Services.AddScoped<TransactionService>();
+builder.Services.AddScoped<CacheService>();
+builder.Services.AddSingleton<RedisService>();
 
-builder.Services.AddSingleton(new RedisService("localhost:6379"));
+
+var redis = ConnectionMultiplexer.Connect("localhost:6379");
+builder.Services.AddSingleton<IConnectionMultiplexer>(redis);
+
 
 
 
